@@ -1,0 +1,36 @@
+name: Retention pipeline
+
+on:
+  workflow_dispatch:          # adds a "Run workflow" button you can click any time
+  schedule:
+    - cron: '0 6 * * 1'       # every Monday 06:00 UTC (~08:00 Berlin)
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Unzip the data
+        run: unzip -o online_retail.zip
+
+      - name: Run the retention pipeline
+        run: python retention_pipeline.py --input online_retail.csv --outdir output
+
+      - name: Show the summary
+        run: cat output/summary.json
+
+      - name: Upload the outputs
+        uses: actions/upload-artifact@v4
+        with:
+          name: retention-output
+          path: output/
