@@ -128,6 +128,28 @@ def run(input_path, outdir):
     with open(out("summary.json"), "w") as f:
         json.dump(summary, f, indent=2)
 
+    # --- alert report: written ONLY when the alarm trips -------------------
+    # The workflow checks whether this file exists; if it does, it opens an issue.
+    if summary["alert"]:
+        top = at_risk.head(15)
+        L = []
+        L.append("## Revenue at risk is above the threshold\n")
+        L.append(f"- **Revenue at risk:** GBP {revenue_at_risk:,.0f}")
+        L.append(f"- **At-risk customers:** {len(at_risk):,}  (At Risk + Lost)")
+        L.append(f"- **Alert threshold:** GBP {ALERT_THRESHOLD_GBP:,}")
+        L.append(f"- **Data through:** {summary['data_through']}")
+        L.append(f"- **Run at:** {summary['run_at']}\n")
+        L.append("### Top 15 customers to win back (by past spend)\n")
+        L.append("| CustomerID | Segment | Recency (days) | Orders | Spend (GBP) |")
+        L.append("|---|---|---:|---:|---:|")
+        for _, r in top.iterrows():
+            L.append(f"| {int(r['CustomerID'])} | {r['segment']} | {int(r['recency'])} "
+                     f"| {int(r['frequency'])} | {r['monetary']:,.0f} |")
+        L.append("\nFull list: download this run's `retention-output` artifact and open "
+                 "`at_risk_customers.csv`.")
+        with open(out("alert_issue.md"), "w") as f:
+            f.write("\n".join(L))
+
     return summary
 
 
