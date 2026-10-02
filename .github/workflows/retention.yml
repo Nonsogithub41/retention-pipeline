@@ -1,9 +1,13 @@
 name: Retention pipeline
 
 on:
-  workflow_dispatch:          # adds a "Run workflow" button you can click any time
+  workflow_dispatch:
   schedule:
-    - cron: '0 6 * * 1'       # every Monday 06:00 UTC (~08:00 Berlin)
+    - cron: '0 6 * * 1'
+
+permissions:
+  contents: read
+  issues: write
 
 jobs:
   run:
@@ -28,6 +32,12 @@ jobs:
 
       - name: Show the summary
         run: cat output/summary.json
+
+      - name: Open an alert issue if revenue at risk is high
+        if: ${{ hashFiles('output/alert_issue.md') != '' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh issue create --title "Retention alert - revenue at risk is high" --body-file output/alert_issue.md
 
       - name: Upload the outputs
         uses: actions/upload-artifact@v4
