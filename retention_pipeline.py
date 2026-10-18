@@ -55,8 +55,11 @@ def run(input_path, outdir):
     df["CustomerID"] = df["CustomerID"].astype("Int64")
 
     # --- Step 4: remove non-sales rows -------------------------------------
-    cancel = df["InvoiceNo"].astype(str).str.startswith("C")
-    df = df[~cancel & (df["Quantity"] > 0) & (df["UnitPrice"] > 0)].copy()
+    # Keep only real sales: numeric invoice numbers. This drops cancellations
+    # ("C" prefix) and accounting adjustments (e.g. "A" bad-debt entries such
+    # as A563185 "Adjust bad debt", GBP 11,062) that are not customer purchases.
+    inv = df["InvoiceNo"].astype(str)
+    df = df[inv.str.fullmatch(r"\d+") & (df["Quantity"] > 0) & (df["UnitPrice"] > 0)].copy()
     df = df.drop_duplicates().copy()
 
     # --- Step 5: revenue + save clean table --------------------------------
