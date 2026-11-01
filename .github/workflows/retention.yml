@@ -30,6 +30,11 @@ jobs:
       - name: Run the retention pipeline
         run: python retention_pipeline.py --input online_retail.csv --outdir output
 
+      - name: Generate the AI insight
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: python generate_insight.py --outdir output
+
       - name: Show the summary
         run: cat output/summary.json
 
@@ -37,7 +42,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add output/*.csv
+          git add output/*.csv output/insight.md
           git diff --staged --quiet || git commit -m "Refresh retention outputs [skip ci]"
           git push
 
@@ -45,10 +50,6 @@ jobs:
         if: ${{ hashFiles('output/alert_issue.md') != '' }}
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh issue create --title "Retention alert - revenue at risk is high" --body-file output/alert_issue.md
-
-      - name: Upload the outputs
-        uses: actions/upload-artifact@v4
-        with:
-          name: retention-output
-          path: output/
+        run: |
+          { [ -f output/insight.md ] && cat output/insight.md && echo; cat output/alert_issue.md; } > issue_body.md
+          gh issue create --title "Retention alert - revenue at risk is high" --body-file issue_body.md
