@@ -35,7 +35,7 @@ jobs:
       - name: Generate the AI insight
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: python generate_insight.py --outdir output
+        run: python generate_insight.py --outdir output --model gemini-3.8-flash
 
       - name: Show the summary
         run: cat output/summary.json
