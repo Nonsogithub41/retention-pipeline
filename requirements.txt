@@ -1,2 +1,2 @@
 pandas
-anthropic
+google-genai

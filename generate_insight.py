@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 """
-AI insight layer for the retention pipeline.
-====================================================
+AI insight layer for the retention pipeline (Google Gemini, free tier).
+=======================================================================
 Runs AFTER retention_pipeline.py. It reads the pipeline's summary.json (and the
-top at-risk customers) and asks an LLM (Anthropic Claude) to write a short,
+top at-risk customers) and asks an LLM (Google Gemini) to write a short,
 plain-language weekly briefing for a manager. Writes output/insight.md.
 
-Needs ANTHROPIC_API_KEY in the environment (set as a GitHub Actions secret).
+Needs GEMINI_API_KEY in the environment (set as a GitHub Actions secret).
+Get a free key at https://aistudio.google.com (no billing required).
 If the key or the API call is unavailable, it writes a plain fallback summary
 so the workflow never breaks.
 
@@ -73,21 +74,19 @@ def generate(outdir, model):
     out_path = os.path.join(outdir, "insight.md")
     header = f"# Weekly retention insight\n\n_Data through {s.get('data_through')}._\n\n"
 
-    key = os.environ.get("ANTHROPIC_API_KEY")
+    key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
     if not key:
-        open(out_path, "w").write(header + fallback(s) + "\n\n_(No ANTHROPIC_API_KEY set; plain fallback used.)_\n")
+        open(out_path, "w").write(header + fallback(s) + "\n\n_(No GEMINI_API_KEY set; plain fallback used.)_\n")
         print("No API key found; wrote fallback insight.")
         return
 
     try:
-        import anthropic
-        client = anthropic.Anthropic()  # reads ANTHROPIC_API_KEY from the environment
-        msg = client.messages.create(
-            model=model,
-            max_tokens=500,
-            messages=[{"role": "user", "content": build_prompt(s, top)}],
-        )
-        text = msg.content[0].text.strip()
+        from google import genai
+        client = genai.Client(api_key=key)
+        resp = client.models.generate_content(model=model, contents=build_prompt(s, top))
+        text = (resp.text or "").strip()
+        if not text:
+            raise RuntimeError("empty response from the model")
         open(out_path, "w").write(header + text + "\n")
         print("Wrote AI insight.")
     except Exception as e:
@@ -98,6 +97,6 @@ def generate(outdir, model):
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--outdir", default="output")
-    ap.add_argument("--model", default="claude-haiku-4-5-20251001")
+    ap.add_argument("--model", default="gemini-2.0-flash")
     args = ap.parse_args()
     generate(args.outdir, args.model)
