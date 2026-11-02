@@ -2,9 +2,6 @@
 
 _Data through 2011-12-09._
 
-While 65.6% of our 4,338 customers shop with us repeatedly, we crossed our warning threshold this week with £1,316,375 in revenue currently at risk. A total of 1,708 accounts have gone quiet, including 643 slipping away and 1,065 who have stopped buying entirely. Intervening now with our highest spenders will prevent further revenue loss.
+Automated summary (AI step unavailable). Revenue at risk is GBP 1,316,375 across 1,708 customers (At Risk + Lost), against a threshold of GBP 1,200,000. Total revenue is GBP 10,631,049 from 4,338 identified customers, with a 65.6% repeat rate. Win-back effort should start with the highest-spending At Risk customers.
 
-Top 3 actions:
-1. Personally phone or email top at-risk buyers Customer 15749 (£44,534 past spend) and Customer 15098 (£39,916 past spend) to see how we can win their business back.
-2. Send a targeted "we miss you" email campaign with a special incentive to all 643 at-risk customers before they become fully lost.
-3. Assign a manager to investigate why our largest lost buyer, Customer 12346 (£77,184 past spend), stopped ordering, and present them with a tailored restock offer.
+_(AI step failed: 503 UNAVAILABLE. {'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}; plain fallback used.)_
