@@ -103,5 +103,5 @@ output/                      # published results the dashboard reads + the AI br
 
 ## Author
 
-**Nonso Ezeoma** — Business Data Analyst, Berlin
+**Nonso Ezeoma** — Business Data Analyst & AI Automation Specialist, Berlin
 [nonso-analytics.com](https://nonso-analytics.com) · [LinkedIn](https://linkedin.com/in/nonso-ezeoma)
