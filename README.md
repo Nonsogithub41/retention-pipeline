@@ -14,7 +14,7 @@ For any online store, keeping a customer is far cheaper than winning a new one, 
 - **How much money do they represent?** (revenue at risk)
 - **What should the team do about it?** (an AI-written action list)
 
-The data is the public **UCI Online Retail** dataset (~541k transactions, a UK online retailer), standing in for a fictional store called *Nordwind*.
+The data is the public **UCI Online Retail** dataset (~541k transactions, a UK online retailer), standing in for a store called *Nordwind*.
 
 ---
 
